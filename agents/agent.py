@@ -69,9 +69,9 @@ class Actor:
         states = layers.Input(shape=(self.state_size,), name='states')
 
         # Add hidden layers
-        net = layers.Dense(units=32, activation='relu')(states)
+        net = layers.Dense(units=64, activation='relu')(states)
+        net = layers.Dense(units=128, activation='relu')(net)
         net = layers.Dense(units=64, activation='relu')(net)
-        net = layers.Dense(units=32, activation='relu')(net)
 
         # Try different layer sizes, activations, add batch normalization, regularizers, etc.
 
@@ -151,7 +151,7 @@ class Critic:
 
         # Define optimizer and compile model for training with built-in loss function
         # [ ] TO DO - add learning rate here
-        optimizer = optimizers.Adam(lr=0.001)
+        optimizer = optimizers.Adam(lr=0.0001)
         self.model.compile(optimizer=optimizer, loss='mse')
 
         # Compute action gradients (derivative of Q values w.r.t. to actions)
@@ -217,7 +217,7 @@ class DDPG():
 
         # Algorithm parameters
         self.gamma = 0.99  # discount factor
-        self.tau = 0.01  # for soft update of target parameters
+        self.tau = 0.001  # for soft update of target parameters
 
     def reset_episode(self):
         self.noise.reset()
