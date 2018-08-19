@@ -151,7 +151,7 @@ class Critic:
 
         # Define optimizer and compile model for training with built-in loss function
         # [ ] TO DO - add learning rate here
-        optimizer = optimizers.Adam(lr=0.0001)
+        optimizer = optimizers.Adam(lr=0.001)
         self.model.compile(optimizer=optimizer, loss='mse')
 
         # Compute action gradients (derivative of Q values w.r.t. to actions)
