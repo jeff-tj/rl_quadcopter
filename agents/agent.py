@@ -93,7 +93,7 @@ class Actor:
         # Incorporate any additional losses here (e.g. from regularizers)
 
         # Define optimizer and training function
-        optimizer = optimizers.Adam()
+        optimizer = optimizers.Adam(lr=0.0001)
         updates_op = optimizer.get_updates(params=self.model.trainable_weights, loss=loss)
         self.train_fn = K.function(
             inputs=[self.model.input, action_gradients, K.learning_phase()],
@@ -140,6 +140,8 @@ class Critic:
         net = layers.Activation('relu')(net)
 
         # Add more layers to the combined network if needed
+        net = layers.Dense(units=32, activation='relu')(net)
+        net = layers.Dense(units=64, activation='relu')(net)
 
         # Add final output layer to prduce action values (Q values)
         Q_values = layers.Dense(units=1, name='q_values')(net)
@@ -149,7 +151,7 @@ class Critic:
 
         # Define optimizer and compile model for training with built-in loss function
         # [ ] TO DO - add learning rate here
-        optimizer = optimizers.Adam()
+        optimizer = optimizers.Adam(lr=0.001)
         self.model.compile(optimizer=optimizer, loss='mse')
 
         # Compute action gradients (derivative of Q values w.r.t. to actions)
@@ -219,6 +221,7 @@ class DDPG():
 
     def reset_episode(self):
         self.noise.reset()
+        self.total_reward = 0.0
         state = self.task.reset()
         self.last_state = state
         return state
@@ -226,6 +229,7 @@ class DDPG():
     def step(self, action, reward, next_state, done):
          # Save experience / reward
         self.memory.add(self.last_state, action, reward, next_state, done)
+        self.total_reward += reward
 
         # Learn, if enough samples are available in memory
         if len(self.memory) > self.batch_size:
