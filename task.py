@@ -19,8 +19,8 @@ class Task():
         self.action_repeat = 3
 
         self.state_size = self.action_repeat * 6
-        self.action_low = 0
-        self.action_high = 900
+        self.action_low = 50
+        self.action_high = 600 # Restricted it per slack suggestions
         self.action_size = 4
 
         # Goal
@@ -33,7 +33,7 @@ class Task():
         angular_dev = np.sqrt(np.square(self.sim.pose[3:]).sum())
         # Also want to penalise movement not in z-axis (DeepMind Locomotion)
         non_z_v = np.square(self.sim.v[:2]).sum()
-        reward = 1.-.25*dist_from_target - .25*angular_dev -.005*non_z_v
+        reward = reward = 1. - .001*dist_from_target - .0005*angular_dev - .0005*non_z_v
         return reward
 
     def step(self, rotor_speeds):
